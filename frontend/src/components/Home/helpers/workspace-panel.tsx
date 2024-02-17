@@ -1,5 +1,13 @@
 import React from "react";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { File } from "lucide-react";
+
 type Props = {};
 
 const workspacesData: WorkSpaceItemProps[] = [
@@ -13,22 +21,20 @@ const workspacesData: WorkSpaceItemProps[] = [
           {
             type: "folder",
             name: "sub folder1",
-            items: [],
+            items: [ {
+              type: "file",
+              name: "file-inside-sub-folder.txt",
+            }],
           },
           {
             type: "file",
-            name: "file-example.json",
+            name: "file-example.txt",
           },
         ],
       },
-    ],
-  },
-  {
-    workspaceName: "workspace2",
-    items: [
       {
         type: "file",
-        name: "file-example.json",
+        name: "file-example2.txt",
       },
     ],
   },
@@ -38,7 +44,6 @@ const WorkspacePanelComponent = (props: Props) => {
   return (
     <div className="w-96 bg-slate-100 p-3 border border-r-slate-200 h-dvh">
       <h2 className="font-semibold">#Workspaces</h2>
-
       <ul>
         {workspacesData.map((item) => (
           <WorkspaceItem key={item.workspaceName} data={item} />
@@ -63,33 +68,32 @@ const WorkspaceItem = ({ data }: { data: WorkSpaceItemProps }) => {
   return (
     <div>
       <p className="text-slate-600"> {data.workspaceName}</p>
-      <ul className="ps-4">
+      <Accordion type="multiple">
         {data.items.map((workspaceItem) => (
-          <li key={workspaceItem.name}>
-            {workspaceItem.type === "file" ? (
-              <p>{workspaceItem.name}</p>
-            ) : (
-              <WorkspaceItemFolder data={workspaceItem} />
-            )}
-          </li>
+          <WorkspaceItemFolder key={workspaceItem.name} data={workspaceItem} />
         ))}
-      </ul>
+      </Accordion>
     </div>
   );
 };
 
 const WorkspaceItemFolder = ({ data }: { data: WorkSpaceItems }) => {
-  if (data.type === "file") return data.name;
+  if (data.type === "file")
+    return (
+      <div className="text-sm flex py-1">
+        <File size={20} /> {data.name}
+      </div>
+    );
 
   return (
-    <div>
-      <p>{data.name}</p>
-      <ul className="ps-4">
+    <AccordionItem  value={data.name}>
+      <AccordionTrigger>{data.name}</AccordionTrigger>
+      <AccordionContent  >
         {data.items?.map((item) => (
           <WorkspaceItemFolder key={item.name} data={item} />
         ))}
-      </ul>
-    </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 };
 
