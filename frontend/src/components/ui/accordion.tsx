@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDown, File, FolderClosed, FolderOpen } from "lucide-react";
+import { ChevronDown, FolderClosed, FolderOpen } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -28,15 +28,15 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        `flex flex-1 items-center  py-1 font-medium transition-all hover:underline [&[data-state=closed]>.folder-open]:hidden
+        `flex flex-1 items-center  py-1  transition-all hover:underline [&[data-state=closed]>.folder-open]:hidden
          [&[data-state=open]>.folder-closed]:hidden [&[data-state=open]>.chevron]:rotate-180`,
         className
       )}
       {...props}
     >
       <ChevronDown className="chevron h-4 w-4 shrink-0 transition-transform duration-200" />
-      <FolderClosed size={20} className="folder-closed" />
-      <FolderOpen size={20} className="folder-open" />
+      <FolderClosed size={20} className="folder-closed mr-1" />
+      <FolderOpen size={20} className="folder-open mr-1" />
       {children}
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
@@ -57,7 +57,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden border-solid border-l-2 pl-4 text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("pb-4 pt-0", className)}>
+    <div className={cn("", className)}>
       {children}
     </div>
   </AccordionPrimitive.Content>
