@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import axios from "axios"
 import {
   Accordion,
   AccordionContent,
@@ -19,8 +20,22 @@ export type WorkSpaceItems = {
   items?: WorkSpaceItems[];
 };
 
-const WorkspaceItem = ({ data }: { data: WorkSpaceItemProps }) => {
+const WorkspaceItem = ({ id }: { id: number }) => {
+  const [data,setData]= useState<WorkSpaceItemProps | null>(null)
   const [activeItemPath, setactiveItemPath] = useState("");
+
+  useEffect(()=> {
+
+    const fetchWorkspaceData = async () => {
+
+      const response = await axios.get('http://localhost:5000/workspaces/1');
+      
+      setData(response.data)
+    }
+
+    fetchWorkspaceData()
+
+  },[])
 
   const addFolder = () => {
     /* POST REQUEST  
@@ -41,14 +56,14 @@ const WorkspaceItem = ({ data }: { data: WorkSpaceItemProps }) => {
   return (
     <div className="text-gray-600">
       <div className=" flex content-start justify-between mb-3">
-        <span className="mr-auto font-medium"> {data.workspaceName}</span>
+        <span className="mr-auto font-medium"> {data?.workspaceName}</span>
         <FolderPlus size={20} className="mr-1" />
         <FilePlus size={20} className="mr-1" />
         <CopyMinus size={20} />
       </div>
       <p className="text-pink-500">{activeItemPath}</p>
       <Accordion type="multiple">
-        {data.items.map((workspaceItem) => (
+        {data?.items.map((workspaceItem) => (
           <WorkspaceItemFolder
             activeItemPath={activeItemPath}
             basePath=""

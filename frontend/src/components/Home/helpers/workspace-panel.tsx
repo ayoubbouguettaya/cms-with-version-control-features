@@ -6,48 +6,6 @@ import WorkspaceItem, { WorkSpaceItemProps } from "./workspace-item";
 
 type Props = {};
 
-const workspacesData: WorkSpaceItemProps[] = [
-  {
-    workspaceName: "workspace",
-    items: [
-      {
-        type: "folder",
-        name: "folder-1",
-        items: [
-          {
-            type: "folder",
-            name: "sub-folder1",
-            items: [
-              {
-                type: "file",
-                name: "folder-568.md",
-              },
-            ],
-          },
-          {
-            type: "file",
-            name: "file-example.md",
-          },
-        ],
-      },
-      {
-        type: "folder",
-        name: "folder-2",
-        items: [
-          {
-            type: "file",
-            name: "folder-98.md",
-          },
-        ],
-      },
-      {
-        type: "file",
-        name: "file-example2.md",
-      },
-    ],
-  },
-];
-
 const WorkspacePanelComponent = (props: Props) => {
 
   // Http calls to get the workspaces
@@ -59,8 +17,8 @@ const WorkspacePanelComponent = (props: Props) => {
         Workspaces
       </h2>
       <ul>
-        {workspacesData.map((item) => (
-          <WorkspaceItem key={item.workspaceName} data={item} />
+        {[{id: 1}].map((item) => (
+          <WorkspaceItem key={item.id} id={item.id} />
         ))}
       </ul>
     </div>
