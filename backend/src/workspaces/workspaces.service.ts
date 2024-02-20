@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWorkspaceDto } from './dto/create-workspace.dto';
-import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
-import { WorkspaceRepository } from './workspace.repository';
+import { Injectable } from "@nestjs/common";
+import { CreateWorkspaceDto } from "./dto/create-workspace.dto";
+import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
+import { WorkspaceRepository } from "./workspace.repository";
 
 @Injectable()
 export class WorkspacesService {
   constructor(private workspaceRepository: WorkspaceRepository) {}
 
-  create(createWorkspaceDto: CreateWorkspaceDto) {
-    console.log(createWorkspaceDto)
-    return 'This action adds a new workspace';
+  async create(createWorkspaceDto: CreateWorkspaceDto) {
+    return await this.workspaceRepository.create(
+      createWorkspaceDto.relatedPath,
+      createWorkspaceDto.type,
+    );
   }
 
   findAll() {
@@ -21,7 +23,7 @@ export class WorkspacesService {
   }
 
   update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
-    console.log(updateWorkspaceDto)
+    console.log(updateWorkspaceDto);
     return `This action updates a #${id} workspace`;
   }
 

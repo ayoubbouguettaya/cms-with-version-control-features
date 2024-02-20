@@ -20,7 +20,7 @@ export type WorkSpaceItems = {
   items?: WorkSpaceItems[];
 };
 
-const WorkspaceItem = ({ id }: { id: number }) => {
+const WorkspaceItem = () => {
   const [data,setData]= useState<WorkSpaceItemProps | null>(null)
   const [activeItemPath, setactiveItemPath] = useState("");
 
@@ -37,28 +37,32 @@ const WorkspaceItem = ({ id }: { id: number }) => {
 
   },[])
 
-  const addFolder = () => {
-    /* POST REQUEST  
-    related Path    type   FIle or folder 
+  const addFileOrFolder = async (type: "file" | "folder") => {
+    try {
+      
+      const response = await axios.post(
+        'http://localhost:5000/workspaces',
+        {
+          type,
+          relatedPath: activeItemPath
+        }
+        )
+        console.log("type of the creation",type)
 
-    check related generate ne   new-folder(1)
-   response => to update the state .  
-*/
+        setData(response.data)
+        
+      } catch (error) {
+        console.log(error)
+      }
   };
 
-  const addFile = () => {
-    /* POST REQUEST  
-           body name of Folder / file and related Path
-           response => to update the state .  
-        */
-  };
 
   return (
     <div className="text-gray-600">
       <div className=" flex content-start justify-between mb-3">
         <span className="mr-auto font-medium"> {data?.workspaceName}</span>
-        <FolderPlus size={20} className="mr-1" />
-        <FilePlus size={20} className="mr-1" />
+        <button onClick={() => addFileOrFolder("folder")}> <FolderPlus size={20} className="mr-1" /></button>
+        <button onClick={() => addFileOrFolder("file")}> <FilePlus size={20} className="mr-1" /></button>
         <CopyMinus size={20} />
       </div>
       <p className="text-pink-500">{activeItemPath}</p>

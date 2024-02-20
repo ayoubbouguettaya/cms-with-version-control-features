@@ -2,13 +2,11 @@
 import React from "react";
 
 import { Layers } from "lucide-react";
-import WorkspaceItem, { WorkSpaceItemProps } from "./workspace-item";
+import WorkspaceItem from "./workspace-item";
 
 type Props = {};
 
 const WorkspacePanelComponent = (props: Props) => {
-
-  // Http calls to get the workspaces
 
   return (
     <div className="font-mono w-96 bg-slate-100 p-3 border border-r-slate-200 h-dvh">
@@ -16,14 +14,9 @@ const WorkspacePanelComponent = (props: Props) => {
         <Layers className="mr-1" />
         Workspaces
       </h2>
-      <ul>
-        {[{id: 1}].map((item) => (
-          <WorkspaceItem key={item.id} id={item.id} />
-        ))}
-      </ul>
+      <WorkspaceItem />
     </div>
   );
 };
-
 
 export default WorkspacePanelComponent;

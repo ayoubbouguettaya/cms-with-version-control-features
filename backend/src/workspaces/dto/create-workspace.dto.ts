@@ -1,1 +1,4 @@
-export class CreateWorkspaceDto {}
+export class CreateWorkspaceDto {
+  relatedPath: string;
+  type: "folder" | "file";
+}
