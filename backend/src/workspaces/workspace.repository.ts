@@ -1,4 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { mkdir, readFile, readdir, stat, writeFile } from "fs/promises";
+import { join } from "path";
 
 const workspacesData = [
   {
@@ -49,31 +51,95 @@ export type Item = {
   items: Item[];
 };
 
+const workspacesPath = "/home/ayoub/applications/cms";
+
 @Injectable()
 export class WorkspaceRepository {
-  findOne(id: number) {
-    console.log("ignore", id);
-    return workspacesData[0];
+  async findOne(id: number) {
+    const workspaces = await readdir(workspacesPath);
+
+    const data = [] as Item[];
+
+    await Promise.all(
+      workspaces.map(async (item) => {
+        const stats = await stat(join(workspacesPath, item));
+
+        if (stats.isDirectory()) {
+          const workspace = {
+            name: item,
+            type: "folder",
+            items: [],
+          } satisfies Item;
+
+          await this.readWorkspace(workspace, join(workspacesPath, item));
+
+          data.push(workspace);
+        }
+        return null;
+      }),
+    );
+
+    return data[0];
+  }
+
+  private async readWorkspace(data: Item, currentPath: string) {
+    const childrenItems = await readdir(currentPath);
+
+    await Promise.all(
+      childrenItems.map(async (item) => {
+        const stats = await stat(join(currentPath, item));
+        if (stats.isFile()) {
+          const file = {
+            name: item,
+            type: "file",
+            items: [],
+          } satisfies Item;
+
+          data.items.push(file);
+        }
+        if (stats.isDirectory()) {
+          const directory = {
+            name: item,
+            type: "folder",
+            items: [],
+          } satisfies Item;
+
+          await this.readWorkspace(directory, join(currentPath, item));
+
+          data.items.push(directory);
+        }
+      }),
+    );
+  }
+
+  async getContent(workspaceName: string, path: string) {
+    try {
+      const absolutePath = join(workspacesPath, workspaceName, path);
+      console.log(absolutePath);
+      return await readFile(absolutePath, "utf8");
+    } catch (error) {
+      console.log(error);
+      return "";
+    }
   }
 
   async create(relatedPath: string, type: "folder" | "file") {
-    console.log("ignore", type);
-    const paths = relatedPath.split("/").slice(1);
+    const paths = relatedPath.split("/");
 
     const cleanedPaths = paths[paths.length - 1].includes(".")
       ? paths.slice(0, paths.length - 1)
       : paths;
 
-    if (type === "file")
-      this.addFile(workspacesData[0], 0, ["workspace", ...cleanedPaths]);
+    const workspace = await this.findOne(0);
 
-    if (type === "folder")
-      this.addFolder(workspacesData[0], 0, ["workspace", ...cleanedPaths]);
+    if (type === "file") this.addFile(workspace, 0, cleanedPaths);
 
-    return workspacesData[0];
+    if (type === "folder") this.addFolder(workspace, 0, cleanedPaths);
+
+    return workspace;
   }
 
-  addFile(data: Item, level, cleanedPaths) {
+  async addFile(data: Item, level, cleanedPaths: string[]) {
     const currentLevel = level;
 
     if (data.name === cleanedPaths[level]) {
@@ -83,6 +149,14 @@ export class WorkspaceRepository {
           name: `new-file-${data.items.length}.md`,
           items: [],
         });
+
+        const absolutePath = join(workspacesPath, ...cleanedPaths);
+        await writeFile(
+          join(absolutePath, `new-file-${data.items.length}.md`),
+          "just file",
+          "utf-8",
+        );
+
         console.log("_____________________we made it");
         return true;
       }
@@ -94,7 +168,7 @@ export class WorkspaceRepository {
     return false;
   }
 
-  addFolder(data: Item, level, cleanedPaths) {
+  async addFolder(data: Item, level, cleanedPaths) {
     const currentLevel = level;
 
     if (data.name === cleanedPaths[level]) {
@@ -104,6 +178,10 @@ export class WorkspaceRepository {
           name: `new-folder-${data.items.length}`,
           items: [],
         });
+
+        const absolutePath = join(workspacesPath, ...cleanedPaths);
+        await mkdir(join(absolutePath, `new-folder-${data.items.length}`));
+
         console.log("_____________________we made it");
         return true;
       }

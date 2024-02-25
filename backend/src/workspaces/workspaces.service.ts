@@ -14,14 +14,17 @@ export class WorkspacesService {
     );
   }
 
+  async findOne(id: number) {
+    return await this.workspaceRepository.findOne(id);
+  }
+
+  async getContent(workspaceName: string, path: string) {
+    return await this.workspaceRepository.getContent(workspaceName, path);
+  }
+
   findAll() {
     return `This action returns all workspaces`;
   }
-
-  findOne(id: number) {
-    return this.workspaceRepository.findOne(id);
-  }
-
   update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
     console.log(updateWorkspaceDto);
     return `This action updates a #${id} workspace`;

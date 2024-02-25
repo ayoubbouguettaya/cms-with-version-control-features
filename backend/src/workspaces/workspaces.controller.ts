@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { WorkspacesService } from "./workspaces.service";
 import { CreateWorkspaceDto } from "./dto/create-workspace.dto";
@@ -25,9 +26,12 @@ export class WorkspacesController {
     return this.workspacesService.findOne(+id);
   }
 
-  @Get()
-  findAll() {
-    return this.workspacesService.findAll();
+  @Get(":workspaceName/content")
+  async getContent(
+    @Query("path") path: string,
+    @Param("workspaceName") workspaceName: string,
+  ) {
+    return await this.workspacesService.getContent(workspaceName, path);
   }
 
   @Patch(":id")

@@ -1,18 +1,25 @@
-import React from 'react'
-import WorkspacePanelComponent from './helpers/workspace-panel'
-import EditorPanelComponents from './helpers/editor-panel'
-import VersionningPanelComponent from './helpers/versionning-panel'
+"use client";
 
-type Props = {}
+import React, { useState } from "react";
+import WorkspacePanelComponent from "./helpers/workspace-panel";
+import EditorPanelComponents from "./helpers/editor-panel";
+import VersionningPanelComponent from "./helpers/versionning-panel";
+
+type Props = {};
 
 const HomeComponent = (props: Props) => {
-  return (
-    <div className='flex justify-center content-center'>
-        <WorkspacePanelComponent />
-        <EditorPanelComponents />
-        <VersionningPanelComponent />
-    </div>
-  )
-}
+  const [activeItemPath, setactiveItemPath] = useState("");
 
-export default HomeComponent
+  return (
+    <div className="flex justify-center content-center">
+      <WorkspacePanelComponent
+        activeItemPath={activeItemPath}
+        setactiveItemPath={setactiveItemPath}
+      />
+      <EditorPanelComponents activeItemPath={activeItemPath} />
+      <VersionningPanelComponent />
+    </div>
+  );
+};
+
+export default HomeComponent;

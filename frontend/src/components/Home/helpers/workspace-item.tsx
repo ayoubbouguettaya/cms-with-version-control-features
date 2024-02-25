@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import axios from "axios"
+import axios from "axios";
 import {
   Accordion,
   AccordionContent,
@@ -10,7 +10,8 @@ import {
 import { CopyMinus, File, FilePlus, FolderPlus, Layers } from "lucide-react";
 
 export type WorkSpaceItemProps = {
-  workspaceName: string;
+  name: string;
+  type: "folder";
   items: WorkSpaceItems[];
 };
 
@@ -20,49 +21,52 @@ export type WorkSpaceItems = {
   items?: WorkSpaceItems[];
 };
 
-const WorkspaceItem = () => {
-  const [data,setData]= useState<WorkSpaceItemProps | null>(null)
-  const [activeItemPath, setactiveItemPath] = useState("");
+type Props = {
+  activeItemPath: string;
+  setactiveItemPath: React.Dispatch<React.SetStateAction<string>>;
+};
 
-  useEffect(()=> {
+const WorkspaceItem = ({ activeItemPath, setactiveItemPath }: Props) => {
+  const [data, setData] = useState<WorkSpaceItemProps | null>(null);
 
+  useEffect(() => {
     const fetchWorkspaceData = async () => {
+      const response = await axios.get("http://localhost:5000/workspaces/1");
 
-      const response = await axios.get('http://localhost:5000/workspaces/1');
-      
-      setData(response.data)
-    }
+      setData(response.data);
+    };
 
-    fetchWorkspaceData()
-
-  },[])
+    fetchWorkspaceData();
+  }, []);
 
   const addFileOrFolder = async (type: "file" | "folder") => {
     try {
-      
-      const response = await axios.post(
-        'http://localhost:5000/workspaces',
-        {
-          type,
-          relatedPath: activeItemPath
-        }
-        )
-        console.log("type of the creation",type)
+      const response = await axios.post("http://localhost:5000/workspaces", {
+        type,
+        relatedPath: `${data?.name}${activeItemPath}`,
+      });
+      console.log("type of the creation", type);
 
-        setData(response.data)
-        
-      } catch (error) {
-        console.log(error)
-      }
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
-
 
   return (
     <div className="text-gray-600">
       <div className=" flex content-start justify-between mb-3">
-        <span className="mr-auto font-medium"> {data?.workspaceName}</span>
-        <button onClick={() => addFileOrFolder("folder")}> <FolderPlus size={20} className="mr-1" /></button>
-        <button onClick={() => addFileOrFolder("file")}> <FilePlus size={20} className="mr-1" /></button>
+        <span className="mr-auto font-medium">
+          <button onClick={() => setactiveItemPath("")}> {data?.name}</button>
+        </span>
+        <button onClick={() => addFileOrFolder("folder")}>
+          {" "}
+          <FolderPlus size={20} className="mr-1" />
+        </button>
+        <button onClick={() => addFileOrFolder("file")}>
+          {" "}
+          <FilePlus size={20} className="mr-1" />
+        </button>
         <CopyMinus size={20} />
       </div>
       <p className="text-pink-500">{activeItemPath}</p>
