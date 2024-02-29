@@ -7,11 +7,13 @@ import WorkspaceItem from "./workspace-item";
 type Props = {
   activeItemPath: string;
   setactiveItemPath: React.Dispatch<React.SetStateAction<string>>;
+  setActiveItemIsDirectory: React.Dispatch<React.SetStateAction<boolean>>
 };
 
 const WorkspacePanelComponent = ({
   activeItemPath,
   setactiveItemPath,
+  setActiveItemIsDirectory
 }: Props) => {
   return (
     <div className="font-mono w-96 bg-slate-100 p-3 border border-r-slate-200 h-dvh">
@@ -22,6 +24,7 @@ const WorkspacePanelComponent = ({
       <WorkspaceItem
         activeItemPath={activeItemPath}
         setactiveItemPath={setactiveItemPath}
+        setActiveItemIsDirectory={setActiveItemIsDirectory}
       />
     </div>
   );

@@ -6,9 +6,12 @@ import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { setLazyProp } from "next/dist/server/api-utils";
 
-type Props = { activeItemPath: string };
+type Props = { activeItemPath: string; activeItemIsDirectory: boolean };
 
-const EditorPanelComponents = ({ activeItemPath }: Props) => {
+const EditorPanelComponents = ({
+  activeItemPath,
+  activeItemIsDirectory,
+}: Props) => {
   const [content, setContent] = useState("");
   const [isLoading, setIsloading] = useState(false);
 
@@ -30,28 +33,39 @@ const EditorPanelComponents = ({ activeItemPath }: Props) => {
       }
     };
 
-    fetchContent();
-  }, [activeItemPath]);
+    if (!activeItemIsDirectory) {
+      fetchContent();
+    }
+  }, [activeItemPath, activeItemIsDirectory]);
 
   return (
     <div className="w-full p-6">
       <div className="flex text-slate-400 h-5 mb-3 items-center space-x-4 text-sm">
-        {activeItemPath.split("/").map((item) => (
-          item && <>
-            <div>{item}</div>
-            <Separator orientation="vertical" />
-          </>
-        ))}
+        {activeItemPath.split("/").map(
+          (item) =>
+            item && (
+              <>
+                <div>{item}</div>
+                <Separator orientation="vertical" />
+              </>
+            )
+        )}
       </div>
-      {!isLoading ? (activeItemPath && 
-        <Editor
-          height="90vh"
-          width={"100%"}
-          defaultLanguage="Markdown"
-          defaultValue={content}
-          // theme="vs-dark"
-        />): <p>Is loading ...</p>
-      }
+      {!activeItemIsDirectory && activeItemPath ? (
+        !isLoading ? (
+          <Editor
+            height="90vh"
+            width={"100%"}
+            defaultLanguage="Markdown"
+            defaultValue={content}
+            // theme="vs-dark"
+          />
+        ) : (
+          <p>Is loading ...</p>
+        )
+      ) : (
+        <p>please select a file in the side bar, nothing to show</p>
+      )}
     </div>
   );
 };

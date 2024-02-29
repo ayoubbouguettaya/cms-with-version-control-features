@@ -9,14 +9,16 @@ type Props = {};
 
 const HomeComponent = (props: Props) => {
   const [activeItemPath, setactiveItemPath] = useState("");
+  const [activeItemIsDirectory,setActiveItemIsDirectory] = useState(true);
 
   return (
     <div className="flex justify-center content-center">
       <WorkspacePanelComponent
         activeItemPath={activeItemPath}
         setactiveItemPath={setactiveItemPath}
+        setActiveItemIsDirectory={setActiveItemIsDirectory}
       />
-      <EditorPanelComponents activeItemPath={activeItemPath} />
+      <EditorPanelComponents activeItemIsDirectory={activeItemIsDirectory} activeItemPath={activeItemPath} />
       <VersionningPanelComponent />
     </div>
   );

@@ -7,7 +7,26 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { CopyMinus, File, FilePlus, FolderPlus, Layers } from "lucide-react";
+import {
+  CopyMinus,
+  File,
+  FilePen,
+  FilePlus,
+  FolderPen,
+  FolderPlus,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTrigger,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export type WorkSpaceItemProps = {
   name: string;
@@ -24,9 +43,14 @@ export type WorkSpaceItems = {
 type Props = {
   activeItemPath: string;
   setactiveItemPath: React.Dispatch<React.SetStateAction<string>>;
+  setActiveItemIsDirectory: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const WorkspaceItem = ({ activeItemPath, setactiveItemPath }: Props) => {
+const WorkspaceItem = ({
+  activeItemPath,
+  setactiveItemPath,
+  setActiveItemIsDirectory,
+}: Props) => {
   const [data, setData] = useState<WorkSpaceItemProps | null>(null);
 
   useEffect(() => {
@@ -53,6 +77,12 @@ const WorkspaceItem = ({ activeItemPath, setactiveItemPath }: Props) => {
     }
   };
 
+  const handleSelectItem = (data: WorkSpaceItems, relatedPath: string) => {
+    console.log(data.name, "==", relatedPath);
+    setActiveItemIsDirectory(data.type === "folder");
+    setactiveItemPath(relatedPath);
+  };
+
   return (
     <div className="text-gray-600">
       <div className=" flex content-start justify-between mb-3">
@@ -70,30 +100,52 @@ const WorkspaceItem = ({ activeItemPath, setactiveItemPath }: Props) => {
         <CopyMinus size={20} />
       </div>
       <p className="text-pink-500">{activeItemPath}</p>
-      <Accordion type="multiple">
-        {data?.items.map((workspaceItem) => (
-          <WorkspaceItemFolder
-            activeItemPath={activeItemPath}
-            basePath=""
-            key={workspaceItem.name}
-            setactiveItemPath={setactiveItemPath}
-            data={workspaceItem}
-          />
-        ))}
-      </Accordion>
+      <Dialog>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename</DialogTitle>
+            <DialogDescription>
+              Are you sure to rename your folder{" "}
+              {activeItemPath.split("/")[activeItemPath.split("/").length - 1]}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                fileName
+              </Label>
+              <Input id="username" value="@peduarte" className="col-span-3" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => console.log("submit modal")}>Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+        <Accordion type="multiple">
+          {data?.items.map((workspaceItem) => (
+            <WorkspaceItemFolder
+              activeItemPath={activeItemPath}
+              basePath=""
+              key={workspaceItem.name}
+              handleSelectItem={handleSelectItem}
+              data={workspaceItem}
+            />
+          ))}
+        </Accordion>
+      </Dialog>
     </div>
   );
 };
 
 const WorkspaceItemFolder = ({
   data,
-  setactiveItemPath,
   activeItemPath,
   basePath,
+  handleSelectItem,
 }: {
   data: WorkSpaceItems;
   activeItemPath: string;
-  setactiveItemPath: React.Dispatch<React.SetStateAction<string>>;
+  handleSelectItem: (data: WorkSpaceItems, relatedPath: string) => void;
   basePath: string;
 }) => {
   const relatedPath = `${basePath}/${data.name}`;
@@ -101,12 +153,17 @@ const WorkspaceItemFolder = ({
   if (data.type === "file")
     return (
       <div
-        onClick={() => setactiveItemPath(relatedPath)}
+        onClick={() => handleSelectItem(data, relatedPath)}
         className={` ${activeItemPath === relatedPath && "bg-slate-300"}
           text-sm flex min-w-32  overflow-hidden py-1 rounded`}
       >
         <File className={`ml-4 mr-1`} width={20} />
         {data.name}
+        {activeItemPath === relatedPath && (
+          <DialogTrigger className="ml-auto">
+            <FilePen width={20} />
+          </DialogTrigger>
+        )}
       </div>
     );
 
@@ -116,11 +173,16 @@ const WorkspaceItemFolder = ({
         <button
           className={`${
             activeItemPath === relatedPath && "bg-slate-300"
-          } rounded`}
-          onClick={() => setactiveItemPath(relatedPath)}
+          } rounded flex w-full`}
+          onClick={() => handleSelectItem(data, relatedPath)}
         >
           {" "}
           {data.name}
+          {activeItemPath === relatedPath && (
+            <DialogTrigger className="ml-auto">
+              <FolderPen width={20} />
+            </DialogTrigger>
+          )}
         </button>{" "}
       </AccordionTrigger>
       <AccordionContent>
@@ -128,7 +190,7 @@ const WorkspaceItemFolder = ({
           <WorkspaceItemFolder
             activeItemPath={activeItemPath}
             basePath={relatedPath}
-            setactiveItemPath={setactiveItemPath}
+            handleSelectItem={handleSelectItem}
             key={item.name}
             data={item}
           />
