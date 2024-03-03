@@ -9,12 +9,12 @@ import {
   Query,
 } from "@nestjs/common";
 import { WorkspacesService } from "./workspaces.service";
-import { CreateWorkspaceDto } from "./dto/create-workspace.dto";
+import { CreateWorkspaceDto, RenameFileOrFolderDto, SaveContentDto } from "./dto/create-workspace.dto";
 import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
 
 @Controller("workspaces")
 export class WorkspacesController {
-  constructor(private readonly workspacesService: WorkspacesService) {}
+  constructor(private readonly workspacesService: WorkspacesService) { }
 
   @Post()
   create(@Body() createWorkspaceDto: CreateWorkspaceDto) {
@@ -32,6 +32,28 @@ export class WorkspacesController {
     @Param("workspaceName") workspaceName: string,
   ) {
     return await this.workspacesService.getContent(workspaceName, path);
+  }
+
+  @Post(":workspaceName/content")
+  async saveContent(
+    @Body() saveContentDto: SaveContentDto,
+    @Param("workspaceName") workspaceName: string,
+  ) {
+    return await this.workspacesService.saveContent(
+      workspaceName,
+      saveContentDto,
+    );
+  }
+
+  @Patch(":workspaceName")
+  async renameFileOrFolder(
+    @Body() renameFileOrFolderDto: RenameFileOrFolderDto,
+    @Param("workspaceName") workspaceName: string,
+  ) {
+    return await this.workspacesService.renameFileOrFolder(
+      workspaceName,
+      renameFileOrFolderDto,
+    );
   }
 
   @Patch(":id")

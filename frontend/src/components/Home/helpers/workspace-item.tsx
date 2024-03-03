@@ -16,17 +16,9 @@ import {
   FolderPlus,
 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
   DialogTrigger,
-  DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import RenameItemDialog from "./rename-dialog";
 
 export type WorkSpaceItemProps = {
   name: string;
@@ -57,6 +49,7 @@ const WorkspaceItem = ({
     const fetchWorkspaceData = async () => {
       const response = await axios.get("http://localhost:5000/workspaces/1");
 
+      console.log(response.data);
       setData(response.data);
     };
 
@@ -100,39 +93,19 @@ const WorkspaceItem = ({
         <CopyMinus size={20} />
       </div>
       <p className="text-pink-500">{activeItemPath}</p>
-      <Dialog>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Rename</DialogTitle>
-            <DialogDescription>
-              Are you sure to rename your folder{" "}
-              {activeItemPath.split("/")[activeItemPath.split("/").length - 1]}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                fileName
-              </Label>
-              <Input id="username" value="@peduarte" className="col-span-3" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => console.log("submit modal")}>Submit</Button>
-          </DialogFooter>
-        </DialogContent>
+      <RenameItemDialog activeItemPath={activeItemPath}>
         <Accordion type="multiple">
           {data?.items.map((workspaceItem) => (
             <WorkspaceItemFolder
               activeItemPath={activeItemPath}
               basePath=""
-              key={workspaceItem.name}
+              key={`${workspaceItem.type}-${workspaceItem.name}`}
               handleSelectItem={handleSelectItem}
               data={workspaceItem}
             />
           ))}
         </Accordion>
-      </Dialog>
+      </RenameItemDialog>
     </div>
   );
 };
@@ -160,7 +133,7 @@ const WorkspaceItemFolder = ({
         <File className={`ml-4 mr-1`} width={20} />
         {data.name}
         {activeItemPath === relatedPath && (
-          <DialogTrigger className="ml-auto">
+          <DialogTrigger asChild className="ml-auto">
             <FilePen width={20} />
           </DialogTrigger>
         )}
@@ -191,7 +164,7 @@ const WorkspaceItemFolder = ({
             activeItemPath={activeItemPath}
             basePath={relatedPath}
             handleSelectItem={handleSelectItem}
-            key={item.name}
+            key={`${relatedPath}-${item.type}-${item.name}`}
             data={item}
           />
         ))}

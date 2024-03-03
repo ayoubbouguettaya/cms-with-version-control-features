@@ -1,49 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { mkdir, readFile, readdir, stat, writeFile } from "fs/promises";
+import { constants, mkdir, readFile, readdir, stat, writeFile, access, rename } from "fs/promises";
 import { join } from "path";
-
-const workspacesData = [
-  {
-    name: "workspace",
-    type: "folder",
-    items: [
-      {
-        type: "folder",
-        name: "folder-1",
-        items: [
-          {
-            type: "folder",
-            name: "sub-folder1",
-            items: [
-              {
-                type: "file",
-                name: "folder-568.md",
-              },
-            ],
-          },
-          {
-            type: "file",
-            name: "file-example.md",
-          },
-        ],
-      },
-      {
-        type: "folder",
-        name: "folder-2",
-        items: [
-          {
-            type: "file",
-            name: "folder-98.md",
-          },
-        ],
-      },
-      {
-        type: "file",
-        name: "file-example2.md",
-      },
-    ],
-  },
-] as Item[];
 
 export type Item = {
   name: string;
@@ -144,15 +101,16 @@ export class WorkspaceRepository {
 
     if (data.name === cleanedPaths[level]) {
       if (cleanedPaths.length - 1 === level) {
+        const count = data.items.length;
         data.items.push({
           type: "file",
-          name: `new-file-${data.items.length}.md`,
+          name: `new-file-${count}.md`,
           items: [],
         });
 
         const absolutePath = join(workspacesPath, ...cleanedPaths);
         await writeFile(
-          join(absolutePath, `new-file-${data.items.length}.md`),
+          join(absolutePath, `new-file-${count}.md`),
           "just file",
           "utf-8",
         );
@@ -173,14 +131,15 @@ export class WorkspaceRepository {
 
     if (data.name === cleanedPaths[level]) {
       if (cleanedPaths.length - 1 === level) {
+        const count = data.items.length;
         data.items.push({
           type: "folder",
-          name: `new-folder-${data.items.length}`,
+          name: `new-folder-${count}`,
           items: [],
         });
 
         const absolutePath = join(workspacesPath, ...cleanedPaths);
-        await mkdir(join(absolutePath, `new-folder-${data.items.length}`));
+        await mkdir(join(absolutePath, `new-folder-${count}`));
 
         console.log("_____________________we made it");
         return true;
@@ -192,4 +151,29 @@ export class WorkspaceRepository {
     }
     return false;
   }
+
+  async isPathExisted(workspaceName: string, relativePath: string) {
+    try {
+      await access(join(workspacesPath, workspaceName, relativePath), constants.R_OK | constants.W_OK)
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async saveFile(workspaceName: string, relativePath, content) {
+    const absolutePath = join(workspacesPath, workspaceName, relativePath)
+    return await writeFile(absolutePath, JSON.stringify(content), "utf-8")
+  }
+
+  async renamePath(workspaceName: string, oldRelativePath: string, newRelativePath: string) {
+    console.log(oldRelativePath, newRelativePath);
+    const oldPath = join(workspacesPath, workspaceName, oldRelativePath);
+    const newPath = join(workspacesPath, workspaceName, newRelativePath);
+
+    await rename(oldPath, newPath);
+    return true;
+  }
+
 }

@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { CreateWorkspaceDto } from "./dto/create-workspace.dto";
+import { CreateWorkspaceDto, RenameFileOrFolderDto, SaveContentDto } from "./dto/create-workspace.dto";
 import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
 import { WorkspaceRepository } from "./workspace.repository";
 
 @Injectable()
 export class WorkspacesService {
-  constructor(private workspaceRepository: WorkspaceRepository) {}
+  constructor(private workspaceRepository: WorkspaceRepository) { }
 
   async create(createWorkspaceDto: CreateWorkspaceDto) {
     return await this.workspaceRepository.create(
@@ -20,6 +20,35 @@ export class WorkspacesService {
 
   async getContent(workspaceName: string, path: string) {
     return await this.workspaceRepository.getContent(workspaceName, path);
+  }
+
+  async saveContent(workspaceName: string, saveContentDto: SaveContentDto) {
+    const { content, relativePath } = saveContentDto;
+
+    if (!(await this.workspaceRepository.isPathExisted(workspaceName,relativePath))) {
+      console.log("the file doesn't existe");
+      return;
+    }
+
+    return await this.workspaceRepository.saveFile(workspaceName,relativePath, content);
+  }
+
+  async renameFileOrFolder(
+    workspaceName: string,
+    renameFileOrFolderDto: RenameFileOrFolderDto,
+  ) {
+    const { newRelativePath, oldRelativePath } = renameFileOrFolderDto;
+    console.log(workspaceName);
+    if (!(await this.workspaceRepository.isPathExisted(workspaceName,oldRelativePath))) {
+      console.log("old path  doesn't existe");
+      return;
+    }
+    if (await this.workspaceRepository.isPathExisted(workspaceName,newRelativePath)) {
+      console.log("new path doesnt existe");
+      return;
+    }
+
+    return await this.workspaceRepository.renamePath(workspaceName,oldRelativePath, newRelativePath);
   }
 
   findAll() {
