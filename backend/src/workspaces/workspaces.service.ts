@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { CreateWorkspaceDto, RenameFileOrFolderDto, SaveContentDto } from "./dto/create-workspace.dto";
 import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
 import { WorkspaceRepository } from "./workspace.repository";
@@ -40,12 +40,11 @@ export class WorkspacesService {
     const { newRelativePath, oldRelativePath } = renameFileOrFolderDto;
     console.log(workspaceName);
     if (!(await this.workspaceRepository.isPathExisted(workspaceName,oldRelativePath))) {
-      console.log("old path  doesn't existe");
-      return;
+      throw new ConflictException("old path  doesn't existe")
+      
     }
     if (await this.workspaceRepository.isPathExisted(workspaceName,newRelativePath)) {
-      console.log("new path doesnt existe");
-      return;
+      throw new ConflictException("new path does existe")
     }
 
     return await this.workspaceRepository.renamePath(workspaceName,oldRelativePath, newRelativePath);

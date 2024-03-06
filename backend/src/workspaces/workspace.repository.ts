@@ -173,7 +173,7 @@ export class WorkspaceRepository {
     const newPath = join(workspacesPath, workspaceName, newRelativePath);
 
     await rename(oldPath, newPath);
-    return true;
+    return await this.findOne(1);
   }
 
 }

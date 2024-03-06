@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/dialog";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { WorkSpaceItemProps } from "./workspace-item";
 
 type Props = {
   children: React.ReactNode;
   activeItemPath: string;
+  setData: React.Dispatch<React.SetStateAction<WorkSpaceItemProps | null>>
 };
 
-const RenameItemDialog = ({ activeItemPath, children }: Props) => {
+const RenameItemDialog = ({ activeItemPath, children,setData }: Props) => {
   const [oldName, setOldName] = useState("");
   const [newName, setNewName] = useState("");
 
@@ -42,10 +44,13 @@ const RenameItemDialog = ({ activeItemPath, children }: Props) => {
   newRelativePath: activeItemPathWithoutItemName + "/" + newName
         }
 
-        console.log(data)
-        return;
-      await axios.patch(`http://localhost:5000/workspaces/workspace-1/`,data);
-    } catch (error) {}
+  const response =     await axios.patch(`http://localhost:5000/workspaces/workspace-1/`,data);
+  setData(response.data)
+  console.log("new Data",response.data)
+
+} catch (error) {
+      console.log("error occured when renaming")
+    }
   };
 
   return (

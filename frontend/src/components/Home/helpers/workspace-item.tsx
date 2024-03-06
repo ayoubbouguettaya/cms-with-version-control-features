@@ -93,7 +93,7 @@ const WorkspaceItem = ({
         <CopyMinus size={20} />
       </div>
       <p className="text-pink-500">{activeItemPath}</p>
-      <RenameItemDialog activeItemPath={activeItemPath}>
+      <RenameItemDialog  setData={setData} activeItemPath={activeItemPath}>
         <Accordion type="multiple">
           {data?.items.map((workspaceItem) => (
             <WorkspaceItemFolder
