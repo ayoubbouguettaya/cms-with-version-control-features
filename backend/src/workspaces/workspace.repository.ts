@@ -72,10 +72,9 @@ export class WorkspaceRepository {
   async getContent(workspaceName: string, path: string) {
     try {
       const absolutePath = join(workspacesPath, workspaceName, path);
-      console.log(absolutePath);
       return await readFile(absolutePath, "utf8");
     } catch (error) {
-      console.log(error);
+      console.log("Content Not Found", path);
       return "";
     }
   }
@@ -115,7 +114,6 @@ export class WorkspaceRepository {
           "utf-8",
         );
 
-        console.log("_____________________we made it");
         return true;
       }
 
@@ -141,7 +139,6 @@ export class WorkspaceRepository {
         const absolutePath = join(workspacesPath, ...cleanedPaths);
         await mkdir(join(absolutePath, `new-folder-${count}`));
 
-        console.log("_____________________we made it");
         return true;
       }
 
@@ -168,7 +165,6 @@ export class WorkspaceRepository {
   }
 
   async renamePath(workspaceName: string, oldRelativePath: string, newRelativePath: string) {
-    console.log(oldRelativePath, newRelativePath);
     const oldPath = join(workspacesPath, workspaceName, oldRelativePath);
     const newPath = join(workspacesPath, workspaceName, newRelativePath);
 

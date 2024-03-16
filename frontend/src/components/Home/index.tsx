@@ -8,17 +8,20 @@ import VersionningPanelComponent from "./helpers/versionning-panel";
 type Props = {};
 
 const HomeComponent = (props: Props) => {
-  const [activeItemPath, setactiveItemPath] = useState("");
-  const [activeItemIsDirectory,setActiveItemIsDirectory] = useState(true);
+  const [activeItemPath, setActiveItemPath] = useState("");
+  const [activeItemIsDirectory, setActiveItemIsDirectory] = useState(true);
 
   return (
     <div className="flex justify-center content-center">
       <WorkspacePanelComponent
         activeItemPath={activeItemPath}
-        setactiveItemPath={setactiveItemPath}
+        setactiveItemPath={setActiveItemPath}
         setActiveItemIsDirectory={setActiveItemIsDirectory}
       />
-      <EditorPanelComponents activeItemIsDirectory={activeItemIsDirectory} activeItemPath={activeItemPath} />
+      <EditorPanelComponents
+        activeItemIsDirectory={activeItemIsDirectory}
+        activeItemPath={activeItemPath}
+      />
       <VersionningPanelComponent />
     </div>
   );

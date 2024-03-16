@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateWorkspaceDto, RenameFileOrFolderDto, SaveContentDto } from "./dto/create-workspace.dto";
 import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
 import { WorkspaceRepository } from "./workspace.repository";
@@ -25,12 +25,11 @@ export class WorkspacesService {
   async saveContent(workspaceName: string, saveContentDto: SaveContentDto) {
     const { content, relativePath } = saveContentDto;
 
-    if (!(await this.workspaceRepository.isPathExisted(workspaceName,relativePath))) {
-      console.log("the file doesn't existe");
-      return;
+    if (!(await this.workspaceRepository.isPathExisted(workspaceName, relativePath))) {
+      throw new NotFoundException("The Path doesnt existe")
     }
 
-    return await this.workspaceRepository.saveFile(workspaceName,relativePath, content);
+    return await this.workspaceRepository.saveFile(workspaceName, relativePath, content);
   }
 
   async renameFileOrFolder(
@@ -38,23 +37,21 @@ export class WorkspacesService {
     renameFileOrFolderDto: RenameFileOrFolderDto,
   ) {
     const { newRelativePath, oldRelativePath } = renameFileOrFolderDto;
-    console.log(workspaceName);
-    if (!(await this.workspaceRepository.isPathExisted(workspaceName,oldRelativePath))) {
+    if (!(await this.workspaceRepository.isPathExisted(workspaceName, oldRelativePath))) {
       throw new ConflictException("old path  doesn't existe")
-      
+
     }
-    if (await this.workspaceRepository.isPathExisted(workspaceName,newRelativePath)) {
+    if (await this.workspaceRepository.isPathExisted(workspaceName, newRelativePath)) {
       throw new ConflictException("new path does existe")
     }
 
-    return await this.workspaceRepository.renamePath(workspaceName,oldRelativePath, newRelativePath);
+    return await this.workspaceRepository.renamePath(workspaceName, oldRelativePath, newRelativePath);
   }
 
   findAll() {
     return `This action returns all workspaces`;
   }
   update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
-    console.log(updateWorkspaceDto);
     return `This action updates a #${id} workspace`;
   }
 

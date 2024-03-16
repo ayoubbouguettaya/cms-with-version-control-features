@@ -16,10 +16,10 @@ import { WorkSpaceItemProps } from "./workspace-item";
 type Props = {
   children: React.ReactNode;
   activeItemPath: string;
-  setData: React.Dispatch<React.SetStateAction<WorkSpaceItemProps | null>>
+  setData: React.Dispatch<React.SetStateAction<WorkSpaceItemProps | null>>;
 };
 
-const RenameItemDialog = ({ activeItemPath, children,setData }: Props) => {
+const RenameItemDialog = ({ activeItemPath, children, setData }: Props) => {
   const [oldName, setOldName] = useState("");
   const [newName, setNewName] = useState("");
 
@@ -38,18 +38,23 @@ const RenameItemDialog = ({ activeItemPath, children,setData }: Props) => {
 
   const handleRename = async () => {
     try {
-        const activeItemPathWithoutItemName = activeItemPath.split("/").slice(0,activeItemPath.split("/").length -1).join("/")
-        const data= {
-            oldRelativePath: activeItemPath,
-  newRelativePath: activeItemPathWithoutItemName + "/" + newName
-        }
+      const activeItemPathWithoutItemName = activeItemPath
+        .split("/")
+        .slice(0, activeItemPath.split("/").length - 1)
+        .join("/");
+      const data = {
+        oldRelativePath: activeItemPath,
+        newRelativePath: activeItemPathWithoutItemName + "/" + newName,
+      };
 
-  const response =     await axios.patch(`http://localhost:5000/workspaces/workspace-1/`,data);
-  setData(response.data)
-  console.log("new Data",response.data)
-
-} catch (error) {
-      console.log("error occured when renaming")
+      const response = await axios.patch(
+        `http://localhost:5000/workspaces/workspace-1/`,
+        data
+      );
+      setData(response.data);
+      console.log("new Data", response.data);
+    } catch (error) {
+      console.log("error occured when renaming");
     }
   };
 
@@ -70,9 +75,7 @@ const RenameItemDialog = ({ activeItemPath, children,setData }: Props) => {
               className="col-span-3"
             />
             <DialogClose asChild>
-              <Button onClick={handleRename}>
-                Rename
-              </Button>
+              <Button onClick={handleRename}>Rename</Button>
             </DialogClose>
           </div>
         </div>
