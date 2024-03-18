@@ -40,7 +40,7 @@ const EditorPanelComponents = ({
   }, [activeItemPath, activeItemIsDirectory]);
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full p-6 h-[calc(100dvh-130px)]">
       <div className="flex text-green-600 h-5 mb-3 items-center space-x-4 text-sm">
         {activeItemPath.split("/").map(
           (item) =>
@@ -113,7 +113,7 @@ const EditorComponent = ({
         Save
       </Button>
       <Editor
-        height="90vh"
+        height="100%"
         width={"100%"}
         defaultLanguage="Markdown"
         defaultValue={content}

@@ -9,7 +9,8 @@ const Navbar = (props: Props) => {
     
     <h2 className='flex text-slate-500 font-bold'>
     <Rocket className='mr-1'  />
-      My CMS</h2> 
+      CMS | Documentation Editor (usecase) 
+      </h2> 
     </div>
   )
 }

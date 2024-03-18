@@ -1,14 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { constants, mkdir, readFile, readdir, stat, writeFile, access, rename } from "fs/promises";
 import { join } from "path";
+import { workspacesPath } from "src/utils";
 
 export type Item = {
   name: string;
   type: "folder" | "file";
   items: Item[];
 };
-
-const workspacesPath = "/home/ayoub/applications/cms";
 
 @Injectable()
 export class WorkspaceRepository {

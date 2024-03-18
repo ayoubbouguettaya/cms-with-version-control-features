@@ -19,18 +19,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import RenameItemDialog from "./rename-dialog";
+import { WorkSpaceItemProps, WorkSpaceItems } from "@/store/types";
 
-export type WorkSpaceItemProps = {
-  name: string;
-  type: "folder";
-  items: WorkSpaceItems[];
-};
 
-export type WorkSpaceItems = {
-  name: string;
-  type: "folder" | "file";
-  items?: WorkSpaceItems[];
-};
 
 type Props = {
   activeItemPath: string;

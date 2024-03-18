@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { WorkSpaceItemProps } from "./workspace-item";
+import { WorkSpaceItemProps } from "@/store/types";
 
 type Props = {
   children: React.ReactNode;
