@@ -7,15 +7,16 @@ import { WorkspaceRepository } from "./workspace.repository";
 export class WorkspacesService {
   constructor(private workspaceRepository: WorkspaceRepository) { }
 
-  async create(createWorkspaceDto: CreateWorkspaceDto) {
+  async create(workspaceName:string,createWorkspaceDto: CreateWorkspaceDto) {
     return await this.workspaceRepository.create(
+      workspaceName,
       createWorkspaceDto.relatedPath,
       createWorkspaceDto.type,
     );
   }
 
-  async findOne(id: number) {
-    return await this.workspaceRepository.findOne(id);
+  async findOne(workspaceName: string) {
+    return await this.workspaceRepository.findOne(workspaceName);
   }
 
   async getContent(workspaceName: string, path: string) {

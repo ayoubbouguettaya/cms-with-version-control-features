@@ -11,7 +11,7 @@ export type Item = {
 
 @Injectable()
 export class WorkspaceRepository {
-  async findOne(id: number) {
+  async findOne(workspaceName: string) {
     const workspaces = await readdir(workspacesPath);
 
     const data = [] as Item[];
@@ -35,7 +35,7 @@ export class WorkspaceRepository {
       }),
     );
 
-    return data[0];
+    return data.find((item)=> item.name === workspaceName)
   }
 
   private async readWorkspace(data: Item, currentPath: string) {
@@ -78,14 +78,14 @@ export class WorkspaceRepository {
     }
   }
 
-  async create(relatedPath: string, type: "folder" | "file") {
+  async create(workSpace: string,relatedPath: string, type: "folder" | "file") {
     const paths = relatedPath.split("/");
 
     const cleanedPaths = paths[paths.length - 1].includes(".")
       ? paths.slice(0, paths.length - 1)
       : paths;
 
-    const workspace = await this.findOne(0);
+    const workspace = await this.findOne(workSpace);
 
     if (type === "file") this.addFile(workspace, 0, cleanedPaths);
 
@@ -168,7 +168,7 @@ export class WorkspaceRepository {
     const newPath = join(workspacesPath, workspaceName, newRelativePath);
 
     await rename(oldPath, newPath);
-    return await this.findOne(1);
+    return await this.findOne(workspaceName);
   }
 
 }

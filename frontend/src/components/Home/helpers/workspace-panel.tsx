@@ -4,16 +4,9 @@ import React from "react";
 import { Layers } from "lucide-react";
 import WorkspaceItem from "./workspace-item";
 
-type Props = {
-  activeItemPath: string;
-  setactiveItemPath: React.Dispatch<React.SetStateAction<string>>;
-  setActiveItemIsDirectory: React.Dispatch<React.SetStateAction<boolean>>
-};
+type Props = {};
 
 const WorkspacePanelComponent = ({
-  activeItemPath,
-  setactiveItemPath,
-  setActiveItemIsDirectory
 }: Props) => {
   return (
     <div className="font-mono w-96 bg-slate-100 p-3 border border-r-slate-200 h-[calc(100dvh-64px)]">
@@ -22,9 +15,6 @@ const WorkspacePanelComponent = ({
         Workspaces
       </h2>
       <WorkspaceItem
-        activeItemPath={activeItemPath}
-        setactiveItemPath={setactiveItemPath}
-        setActiveItemIsDirectory={setActiveItemIsDirectory}
       />
     </div>
   );

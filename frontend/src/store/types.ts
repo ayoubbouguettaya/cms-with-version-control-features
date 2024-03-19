@@ -1,10 +1,15 @@
 export type WorkSpaceState = {
-    activeWorkSpace: string,
+    activeWorkSpaceName: string,
     activeItemIsDirectory: boolean,
-    relativeActivePath : string,
+    activeItemPath : string,
     workspace: WorkSpaceItemProps,
-    commitsHistory: commitHistory[] 
+    commitsHistory: commitHistory[];
+    author?: {
+      userName: string,
+      email: string
+    }
 }
+
 
 export type WorkSpaceItemProps = {
     name: string;
@@ -20,10 +25,11 @@ export type WorkSpaceItemProps = {
 
   
   export type commitHistory = {
-    
         hash: string;
-        author: string;
+        author_email: string;
+        author_name: string;
         message: string;
+        body: string;
         date: string;
-      
   }
+

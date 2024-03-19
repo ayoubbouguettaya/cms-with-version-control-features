@@ -1,27 +1,33 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import Editor, { OnChange } from "@monaco-editor/react";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import {CircleOff, Loader2} from "lucide-react"
+import { CircleOff, Loader2 } from "lucide-react";
+import { WorkSpaceContext } from "@/store/context";
 
-type Props = { activeItemPath: string; activeItemIsDirectory: boolean };
+type Props = {};
 
-const EditorPanelComponents = ({
-  activeItemPath,
-  activeItemIsDirectory,
-}: Props) => {
+const EditorPanelComponents = ({}: Props) => {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    state: { activeItemPath, activeItemIsDirectory, activeWorkSpaceName } = {
+      activeItemPath: "",
+      activeItemIsDirectory: true,
+      activeWorkSpaceName: "",
+    },
+  } = useContext(WorkSpaceContext);
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `http://localhost:5000/workspaces/workspace-1/content?path=${encodeURI(
+          `http://localhost:5000/workspaces/${activeWorkSpaceName}/content?path=${encodeURI(
             activeItemPath
           )}`
         );
@@ -59,6 +65,7 @@ const EditorPanelComponents = ({
           activeItemIsDirectory={activeItemIsDirectory}
           activeItemPath={activeItemPath}
           setContent={setContent}
+          activeWorkSpaceName={activeWorkSpaceName}
         />
       ) : (
         <EmptyContent />
@@ -75,12 +82,14 @@ const EditorComponent = ({
   setContent,
   activeItemIsDirectory,
   activeItemPath,
+  activeWorkSpaceName
 }: {
-  isLoading: boolean;
-  content: string;
-  activeItemIsDirectory: boolean;
-  setContent: (data: string) => void;
-  activeItemPath: string;
+  isLoading: boolean,
+  activeWorkSpaceName: string,
+  content: string,
+  activeItemPath: string,
+  activeItemIsDirectory: boolean,
+  setContent: (data: string) => void,
 }) => {
   const saveContent = async () => {
     try {
@@ -93,7 +102,7 @@ const EditorComponent = ({
       console.log(data);
 
       const response = await axios.post(
-        `http://localhost:5000/workspaces/workspace-1/content`,
+        `http://localhost:5000/workspaces/${activeWorkSpaceName}/content`,
         data
       );
 
@@ -128,13 +137,13 @@ const EditorComponent = ({
 
 const EmptyContent = () => (
   <div className="w-full h-5/6 flex items-center justify-center flex-col">
-    <CircleOff  className="mb-2" />
+    <CircleOff className="mb-2" />
     <p> nothing to show, Please select a file in the side bar </p>
   </div>
 );
 
 const LoadingContent = () => (
   <div className="w-full h-5/6 flex items-center justify-center">
-<Loader2 className="" />
+    <Loader2 className="" />
   </div>
 );

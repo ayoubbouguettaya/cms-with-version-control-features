@@ -9,21 +9,11 @@ import { WorkSpaceProvider } from "@/store/context";
 type Props = {};
 
 const HomeComponent = (props: Props) => {
-  const [activeItemPath, setActiveItemPath] = useState("");
-  const [activeItemIsDirectory, setActiveItemIsDirectory] = useState(true);
-
   return (
     <div className="flex justify-center content-center">
       <WorkSpaceProvider>
-        <WorkspacePanelComponent
-          activeItemPath={activeItemPath}
-          setactiveItemPath={setActiveItemPath}
-          setActiveItemIsDirectory={setActiveItemIsDirectory}
-        />
-        <EditorPanelComponents
-          activeItemIsDirectory={activeItemIsDirectory}
-          activeItemPath={activeItemPath}
-        />
+        <WorkspacePanelComponent />
+        <EditorPanelComponents />
         <VersionningPanelComponent />
       </WorkSpaceProvider>
     </div>

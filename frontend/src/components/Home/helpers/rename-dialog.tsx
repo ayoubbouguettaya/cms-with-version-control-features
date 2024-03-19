@@ -9,19 +9,26 @@ import {
   DialogHeader,
   DialogClose,
 } from "@/components/ui/dialog";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { WorkSpaceItemProps } from "@/store/types";
+import { WorkSpaceContext } from "@/store/context";
 
 type Props = {
   children: React.ReactNode;
-  activeItemPath: string;
-  setData: React.Dispatch<React.SetStateAction<WorkSpaceItemProps | null>>;
 };
 
-const RenameItemDialog = ({ activeItemPath, children, setData }: Props) => {
+const RenameItemDialog = ({  children }: Props) => {
   const [oldName, setOldName] = useState("");
   const [newName, setNewName] = useState("");
+
+  const {
+    state: { activeItemPath,  } = {
+      activeItemPath: "",
+    },
+    dispatch
+  } = useContext(WorkSpaceContext);
+
 
   useEffect(() => {
     const fileOrFolderName =
@@ -51,7 +58,9 @@ const RenameItemDialog = ({ activeItemPath, children, setData }: Props) => {
         `http://localhost:5000/workspaces/workspace-1/`,
         data
       );
-      setData(response.data);
+
+      dispatch?.({type: "SET_WORKSPACE",payload: response.data})
+      //to DO dispace
       console.log("new Data", response.data);
     } catch (error) {
       console.log("error occured when renaming");

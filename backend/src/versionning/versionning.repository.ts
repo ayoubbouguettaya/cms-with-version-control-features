@@ -29,7 +29,7 @@ export class VersionningRepository {
     async addCommit(path: string, message: string, description: string, author: string) {
         try {
             await this.git.add(path)
-            await this.git.commit(message, ["-m", description, `--author==${author}`])
+            await this.git.commit(message, ["-m", description, `--author`, `${author}`])
 
         } catch (error) {
             console.log(error)
@@ -38,7 +38,6 @@ export class VersionningRepository {
 
     async logHistory(path: string) {
         const logs = await this.git.log(['--', path])
-        console.log(logs)
         /**
          * const query: string[] = [];
     const fileName = getFilePath()

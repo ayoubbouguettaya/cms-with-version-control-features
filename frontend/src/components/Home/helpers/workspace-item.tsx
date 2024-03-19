@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import axios from "axios";
 import {
@@ -15,33 +15,33 @@ import {
   FolderPen,
   FolderPlus,
 } from "lucide-react";
-import {
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogTrigger } from "@/components/ui/dialog";
 import RenameItemDialog from "./rename-dialog";
 import { WorkSpaceItemProps, WorkSpaceItems } from "@/store/types";
+import { WorkSpaceContext } from "@/store/context";
 
+type Props = {};
 
+const WorkspaceItem = ({}: Props) => {
 
-type Props = {
-  activeItemPath: string;
-  setactiveItemPath: React.Dispatch<React.SetStateAction<string>>;
-  setActiveItemIsDirectory: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const WorkspaceItem = ({
-  activeItemPath,
-  setactiveItemPath,
-  setActiveItemIsDirectory,
-}: Props) => {
-  const [data, setData] = useState<WorkSpaceItemProps | null>(null);
+  const {
+    state: {
+      activeItemPath,
+      workspace: data,
+    } = {
+      activeItemPath: "",
+      workspace: null,
+    },
+    dispatch,
+  } = useContext(WorkSpaceContext);
 
   useEffect(() => {
     const fetchWorkspaceData = async () => {
-      const response = await axios.get("http://localhost:5000/workspaces/1");
+      const response = await axios.get(
+        "http://localhost:5000/workspaces/workspace-1"
+      );
 
-      console.log(response.data);
-      setData(response.data);
+      dispatch?.({type: "SET_WORKSPACE",payload: response.data})
     };
 
     fetchWorkspaceData();
@@ -49,13 +49,16 @@ const WorkspaceItem = ({
 
   const addFileOrFolder = async (type: "file" | "folder") => {
     try {
-      const response = await axios.post("http://localhost:5000/workspaces", {
-        type,
-        relatedPath: `${data?.name}${activeItemPath}`,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/workspaces/workspace-1",
+        {
+          type,
+          relatedPath: `${data?.name}${activeItemPath}`,
+        }
+      );
       console.log("type of the creation", type);
 
-      setData(response.data);
+      dispatch?.({type: "SET_WORKSPACE",payload: response.data})
     } catch (error) {
       console.log(error);
     }
@@ -63,15 +66,20 @@ const WorkspaceItem = ({
 
   const handleSelectItem = (data: WorkSpaceItems, relatedPath: string) => {
     console.log(data.name, "==", relatedPath);
-    setActiveItemIsDirectory(data.type === "folder");
-    setactiveItemPath(relatedPath);
+    dispatch?.({type: "SET_ACTIVE_PATH",payload:relatedPath})
+    dispatch?.({type: "SET_IS_ACTIVE_PATH_DIRECTORY",payload: data.type === "folder"})
   };
+
+  const selectRootItem = () => {
+    dispatch?.({type: "SET_ACTIVE_PATH",payload:""})
+    dispatch?.({type: "SET_IS_ACTIVE_PATH_DIRECTORY",payload: true})
+  }
 
   return (
     <div className="text-gray-600">
       <div className=" flex content-start justify-between mb-3">
         <span className="mr-auto font-medium">
-          <button onClick={() => setactiveItemPath("")}> {data?.name}</button>
+          <button onClick={selectRootItem}> {data?.name}</button>
         </span>
         <button onClick={() => addFileOrFolder("folder")}>
           {" "}
@@ -83,7 +91,7 @@ const WorkspaceItem = ({
         </button>
         <CopyMinus size={20} />
       </div>
-      <RenameItemDialog  setData={setData} activeItemPath={activeItemPath}>
+      <RenameItemDialog  >
         <Accordion type="multiple">
           {data?.items.map((workspaceItem) => (
             <WorkspaceItemFolder

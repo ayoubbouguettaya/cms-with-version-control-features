@@ -16,14 +16,17 @@ import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
 export class WorkspacesController {
   constructor(private readonly workspacesService: WorkspacesService) { }
 
-  @Post()
-  create(@Body() createWorkspaceDto: CreateWorkspaceDto) {
-    return this.workspacesService.create(createWorkspaceDto);
+  @Post(":workspaceName")
+  create(
+    @Param("workspaceName") workspaceName: string,
+    @Body() createWorkspaceDto: CreateWorkspaceDto
+    ) {
+    return this.workspacesService.create(workspaceName,createWorkspaceDto);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.workspacesService.findOne(+id);
+  @Get(":workspaceName")
+  findOne(@Param("workspaceName") workspaceName: string) {
+    return this.workspacesService.findOne(workspaceName);
   }
 
   @Get(":workspaceName/content")
