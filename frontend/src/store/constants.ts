@@ -4,8 +4,8 @@ const commitsHistoryData = [] as commitHistory[];
 
   export const defaultContextValue = {
     author: {
-      userName: "ayoub_bougue",
-      email: "ayoubbougue@foobarz.blog"
+      userName: "ayoub1",
+      email: "ayoub1@foobarz.blog"
     },
     activeWorkSpaceName: "workspace-1",
     activeItemIsDirectory: true,

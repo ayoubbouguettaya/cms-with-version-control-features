@@ -30,5 +30,14 @@ export class VersionningController {
 
   }
 
+  @Get('commit/:commitHash/content')
+  async showContentCommit(
+    @Param('commitHash') commitHash:string,
+    @Query() showCommit: ShowCommit
+    ) {
+      return await this.versionningService.showContentCommit(commitHash,showCommit)
+
+  }
+
   
 }

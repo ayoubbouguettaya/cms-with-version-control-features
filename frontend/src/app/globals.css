@@ -65,6 +65,55 @@
     --ring: 240 4.9% 83.9%;
   }
 }
+
+:root {
+  --diff-background-color: initial;
+  --diff-text-color: initial;
+  --diff-font-family: Consolas, Courier, monospace;
+  --diff-selection-background-color: #8ab3e2;
+  --diff-gutter-insert-background-color: #20812b;
+  --diff-gutter-delete-background-color: #d3606b;
+  --diff-gutter-insert: #20812b;
+  --diff-gutter-delete: #d3606b;
+  --diff-gutter-selected-background-color: #fffce0;
+  --diff-code-insert-background-color: #aacfb1;
+  --diff-code-delete-background-color: #d1787e;
+  --diff-code-insert-edit-background-color: #c0dc91;
+  --diff-code-delete-edit-background-color: #f39ea2;
+  --diff-code-selected-background-color: #fffce0;
+  --diff-omit-gutter-line-color: #cb2a1d;
+}
+
+.diff{
+  width: 100%;
+  background-color: rgb(203 213 225 / 1);
+  color: #180327;
+  padding: 20px 40px;
+  border-radius: 5px;
+}
+
+.diff-code-insert ,
+.diff-code-delete ,
+.diff-gutter-insert,
+.diff-gutter-delete{
+  font-family: var(--diff-font-family);
+  font-weight: bold;
+  font-style: italic;
+}
+
+.diff-code-insert ,
+.diff-gutter-insert{
+  color: var(--diff-gutter-insert)
+}
+
+.diff-code-delete ,
+.diff-gutter-delete{
+  color: var(--diff-gutter-delete)
+}
+
+.diff-gutter{
+  width: 50px;
+}
  
 @layer base {
   * {

@@ -158,9 +158,9 @@ export class WorkspaceRepository {
     }
   }
 
-  async saveFile(workspaceName: string, relativePath, content) {
+  async saveFile(workspaceName: string, relativePath, content:string) {
     const absolutePath = join(workspacesPath, workspaceName, relativePath)
-    return await writeFile(absolutePath, JSON.stringify(content), "utf-8")
+    return await writeFile(absolutePath, content, "utf-8")
   }
 
   async renamePath(workspaceName: string, oldRelativePath: string, newRelativePath: string) {

@@ -29,7 +29,14 @@ export class VersionningRepository {
     async addCommit(path: string, message: string, description: string, author: string) {
         try {
             await this.git.add(path)
-            await this.git.commit(message, ["-m", description, `--author`, `${author}`])
+
+            const name = author.split(' ')[0]
+            const email = author.split('')[1]
+
+            await this.git.addConfig("user.name",name)
+            await this.git.addConfig("user.email",email)
+
+            await this.git.commit(message, ["-m", description, `--author`, `${name} <${email}>`])
 
         } catch (error) {
             console.log(error)
@@ -71,14 +78,19 @@ export class VersionningRepository {
         return logs
     }
 
-    async showCommit(path: string, commitHash: string) {
+    async showContentAtCommit(path: string, commitHash: string) {
         const log = await this.git.show(`${commitHash}:${path}`)
         return log
     }
 
     async diffCommit(path: string, commitHash: string) {
+        console.log("diff  ============================")
+
+        const metaData= await this.git.log([commitHash,'--', path]);
+
+        console.log(metaData.all)
         const changes = await this.git.show([commitHash, '--pretty=format:%b', '--', path]);
-        return changes
+        return {changes,metaData: metaData.latest}
     }
 
     rollBack(commitHash: string) {

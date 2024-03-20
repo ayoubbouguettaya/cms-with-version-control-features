@@ -31,11 +31,19 @@ export class VersionningService {
   async showCommit(commitHash:string,showCommit: ShowCommit) {
     const {relativeRelativePath,workspaceName} = showCommit;
 
-    return await this.versionningRepository.showCommit(
+    return await this.versionningRepository.diffCommit(
       join(workspaceName, relativeRelativePath),
       commitHash
     )
   }
 
+  async showContentCommit(commitHash:string,showCommit: ShowCommit) {
+    const {relativeRelativePath,workspaceName} = showCommit;
+
+    return await this.versionningRepository.showContentAtCommit(
+      join(workspaceName, relativeRelativePath),
+      commitHash
+    )
+  }
 
 }

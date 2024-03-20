@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,18 +14,12 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { WorkSpaceContext } from "@/store/context";
 import { commitHistory } from "@/store/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
 
 import { GitCommitHorizontal, GitGraph, Undo2 } from "lucide-react";
 import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import CommitShowModal from "./commit-changes";
 
 type Props = {};
 
@@ -45,7 +38,7 @@ const VersionningPanelComponent = (props: Props) => {
       activeWorkSpaceName: "",
       workspace: null,
       commitsHistory: [],
-      author: null
+      author: null,
     },
     dispatch,
   } = useContext(WorkSpaceContext);
@@ -54,22 +47,22 @@ const VersionningPanelComponent = (props: Props) => {
     fetchCommitHistory();
   }, [activeItemPath]);
 
-  const submitCommit = async (message: string,description: string) => {
-    console.log("submit commit", message,description);
-    const commit= {
-        "workspaceName": activeWorkSpaceName,
-        "relativeRelativePath": activeItemPath,
-        "author": `${author?.userName} <${author?.email}>`,
-        message,
-        description
-    }
+  const submitCommit = async (message: string, description: string) => {
+    console.log("submit commit", message, description);
+    const commit = {
+      workspaceName: activeWorkSpaceName,
+      relativeRelativePath: activeItemPath,
+      author: `${author?.userName} ${author?.email}`,
+      message,
+      description,
+    };
 
     try {
-      await axios.post(`http://localhost:5000/versionning/commit`,commit);
+      await axios.post(`http://localhost:5000/versionning/commit`, commit);
     } catch (error) {
-      console.log("error occured when submitting commit")
+      console.log("error occured when submitting commit");
     }
-    await fetchCommitHistory()
+    await fetchCommitHistory();
   };
 
   const fetchCommitHistory = async () => {
@@ -124,21 +117,7 @@ const CommitHistoryItem = (prop: commitHistory) => {
   );
 };
 
-const CommitShowModal = ({ hash }: { hash: string }) => {
-  return (
-    <Dialog>
-      <DialogTrigger className="ml-2 p-2 bg-green-400 border border-gray-300">
-        <GitCommitHorizontal />
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[1000px] h-[80%] overflow-y-scroll">
-        <div>{hash} </div>
-        <DialogFooter className="h-14 mt-auto">
-          <DialogClose>Close</DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+
 
 export type CommitForm = {
   commitMessage: string;
@@ -146,7 +125,7 @@ export type CommitForm = {
 };
 
 const AddCommitForm = (prop: {
-  submitCommit: (commitMessage: string,desc:string) => void;
+  submitCommit: (commitMessage: string, desc: string) => void;
 }) => {
   const form = useForm<CommitForm>({
     defaultValues: {
@@ -156,7 +135,7 @@ const AddCommitForm = (prop: {
   });
 
   function onSubmit(values: CommitForm) {
-    prop.submitCommit(values.commitMessage,values.commitDescription);
+    prop.submitCommit(values.commitMessage, values.commitDescription);
   }
 
   return (
@@ -164,35 +143,35 @@ const AddCommitForm = (prop: {
       <Separator />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="commitMessage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel> Message</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="commitDescription"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel> Description</FormLabel>
-              <FormControl>
-                <Textarea rows={5} placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button  className="mt-3" type="submit">
-          Commit
-        </Button>
+          <FormField
+            control={form.control}
+            name="commitMessage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel> Message</FormLabel>
+                <FormControl>
+                  <Input placeholder="shadcn" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="commitDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel> Description</FormLabel>
+                <FormControl>
+                  <Textarea rows={5} placeholder="shadcn" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button className="mt-3" type="submit">
+            Commit
+          </Button>
         </form>
       </Form>
     </div>
