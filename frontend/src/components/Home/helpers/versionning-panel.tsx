@@ -85,7 +85,7 @@ const VersionningPanelComponent = (props: Props) => {
       </h2>
       <div className="flex flex-col justify-between h-[calc(100%-60px)] ">
         <div className="flex flex-col   overflow-y-auto ">
-          {commitsHistory.map((item) => (
+          {!activeItemIsDirectory && commitsHistory.map((item) => (
             <CommitHistoryItem key={item.hash} {...item} />
           ))}
         </div>

@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from "react";
 import { WorkSpaceContext } from "@/store/context";
 import axios from "axios";
 import { commitHistory } from "@/store/types";
+import { Separator } from "@/components/ui/separator";
 
 const CommitShowModal = ({ hash }: { hash: string }) => {
   return (
@@ -93,9 +94,12 @@ const DialogContentMonted = ({ hash }: { hash: string }) => {
   return (
     <>
       <div>
-        {hash} | {metaData?.hash} | {metaData?.date} | {metaData?.author_name} |{" "}
-        {metaData?.message} | {metaData?.body}
+        <p><b> commit hash:</b> {hash}</p>
+        <p>{metaData?.date} __ <i className="text-sky-800 font-bold"> @{metaData?.author_name}</i> </p>
+        <p><b> Message:</b> {metaData?.message} </p>
+        <p><b>Description:</b> {metaData?.body} </p>
       </div>
+      <Separator className="bg-slate-400" />
       <div>{rows?.map(renderFile)}</div>
     </>
   );

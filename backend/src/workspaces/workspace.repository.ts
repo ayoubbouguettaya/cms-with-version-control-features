@@ -12,10 +12,9 @@ export type Item = {
 @Injectable()
 export class WorkspaceRepository {
   async findOne(workspaceName: string) {
-    const workspaces = await readdir(workspacesPath);
+    const workspaces = (await readdir(workspacesPath)).filter((item)=> item !== '.git');
 
     const data = [] as Item[];
-
     await Promise.all(
       workspaces.map(async (item) => {
         const stats = await stat(join(workspacesPath, item));
@@ -39,10 +38,10 @@ export class WorkspaceRepository {
   }
 
   private async readWorkspace(data: Item, currentPath: string) {
-    const childrenItems = await readdir(currentPath);
-
+    const childrenItems = (await readdir(currentPath)).sort();
+    console.log(childrenItems)
     await Promise.all(
-      childrenItems.map(async (item) => {
+      childrenItems.map(async (item,index) => {
         const stats = await stat(join(currentPath, item));
         if (stats.isFile()) {
           const file = {
@@ -51,7 +50,7 @@ export class WorkspaceRepository {
             items: [],
           } satisfies Item;
 
-          data.items.push(file);
+          data.items[index]= file;
         }
         if (stats.isDirectory()) {
           const directory = {
@@ -62,7 +61,7 @@ export class WorkspaceRepository {
 
           await this.readWorkspace(directory, join(currentPath, item));
 
-          data.items.push(directory);
+          data.items[index]= directory;
         }
       }),
     );
