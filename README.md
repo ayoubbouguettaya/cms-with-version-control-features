@@ -14,4 +14,4 @@ npm
 git
 
 ## Building process recorded on my youtube channel link
-https://youtu.be/u1HMEmjlrX8
+https://youtu.be/e1Qm4_-yhXk
